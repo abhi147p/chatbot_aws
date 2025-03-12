@@ -1,4 +1,6 @@
 service: chatbot-django
+org: universityofnorthtexas1147
+app: chatbot
 
 provider:
   name: aws
