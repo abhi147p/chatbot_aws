@@ -1,0 +1,224 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    text-align: center;
+    padding: 1em;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: space-between; /* Aligns items on the space-between */
+    align-items: center; /* Centers items vertically */
+}
+
+.user-info {
+    position: relative; /* Position relative to allow absolute positioning inside */
+    display: flex;
+    align-items: center; /* Centers the username and dropdown vertically */
+}
+
+#user-dropdown {
+    display: none;
+    position: absolute;
+    right: 0; /* Aligns the dropdown to the right of the user-info div */
+    background-color: #f9f9f9;
+    min-width: 100px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+#user-dropdown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+#user-dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.login-form {
+    max-width: 360px;  /* Adjust this width as needed for your design */
+    margin: auto;      /* Centers the form horizontally */
+    padding: 20px;     /* Provides internal spacing around the form elements */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* Adds subtle shadow for depth */
+}
+
+input[type="text"], input[type="password"] {
+    width: calc(100% - 20px);  /* Adjusts the width considering padding */
+    padding: 10px;             /* Comfortable text input */
+    margin-bottom: 10px;       /* Spacing between inputs */
+}
+
+button {
+    width: 100%;               /* Button takes the full width of the form */
+    padding: 10px;             /* Good touch target size */
+    background-color: #5CDB95; /* Consistent theme color */
+    color: white;              /* Text color for readability */
+    border: none;              /* No borders for a clean look */
+    cursor: pointer;           /* Cursor indicates clickable */
+}
+
+button:hover {
+    background-color: #379683; /* Slightly darker on hover for feedback */
+}
+
+header, footer {
+    text-align: center;
+    padding: 1em;
+    background-color: #f3f3f3;
+}
+
+.layout {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.content, .main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.chatbot-interface {
+    margin-top: 10px;
+}
+
+.chat-window {
+    height: 400px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    overflow-y: auto;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-window ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-window li {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.chatbot-message {
+    background-color: #e7e7e7;
+    text-align: left;
+}
+
+.user-message {
+    background-color: #a2d5f2;
+    text-align: right;
+    align-self: flex-end;
+}
+
+/* .user-input {
+    display: flex;
+}
+
+.user-input input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+}
+
+.user-input button {
+    background-color: #5CDB95;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.user-input button:hover {
+    background-color: #379683;
+} */
+
+/* Specific to the chatbot interface */
+.user-input {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Make the text box wider */
+.user-input input[type="text"] {
+    flex-grow: 1; /* Takes up available space */
+    width: 80%; /* Initial width fallback */
+    padding: 12px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff; /* Keeps the original input color */
+    color: #121212; /* Consistent with previous design */
+}
+
+/* Maintain button styling */
+.user-input button {
+    padding: 12px 20px;
+    background-color: #5CDB95;
+    color: #121212;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.user-input button:hover {
+    background-color: #379683;
+}
+
+
+form {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 8px #aaa;
+}
+
+input[type=text], input[type=password], input[type=number], input[type=email] {
+    width: 50%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+}
+
+button {
+    background-color: #5CDB95;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #379683;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}

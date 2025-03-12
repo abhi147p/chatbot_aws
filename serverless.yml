@@ -1,0 +1,51 @@
+service: chatbot-django
+
+provider:
+  name: aws
+  stage: dev
+  runtime: python3.9  # Use the Python version matching your project
+  region: us-east-1  # Change based on your AWS region
+  memorySize: 512  # Memory for Lambda function
+  timeout: 30  # Lambda timeout in seconds
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+      Resource: "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+  environment:
+    SECRETS_MANAGER_ARN: "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}
+    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}
+    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}
+    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}
+
+functions:
+  chatbot:
+    handler: wsgi_handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http: 
+          path: /{proxy+}
+          method: ANY
+  
+package:
+  exclude:
+    - venv/**
+    - .serverless/**
+    - node_modules/**
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-dotenv-plugin
+
+
+custom:
+  wsgi:
+    app: chatbot_project.wsgi.application
+  pythonRequirements:
+    dockerizePip: false
+  serverless-offline:
+    httpPort: 5000
