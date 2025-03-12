@@ -1,0 +1,123 @@
+{
+  "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\serverless.yml": {
+    "versionFramework": "4.8.0",
+    "servicePath": "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "chatbot-django",
+      "provider": {
+        "name": "aws",
+        "stage": "dev",
+        "runtime": "python3.9",
+        "region": "us-east-1",
+        "memorySize": 512,
+        "timeout": 30,
+        "iamRoleStatements": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "secretsmanager:GetSecretValue"
+            ],
+            "Resource": "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+          }
+        ],
+        "environment": {
+          "SECRETS_MANAGER_ARN": "<REDACTED>",
+          "CHAT_DJANGO_SETTINGS_MODULE": "${env:CHAT_DJANGO_SETTINGS_MODULE}",
+          "CHAT_ACCESS_KEY": "<REDACTED>",
+          "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
+          "CHAT_DATABASE_URL": "postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}"
+        }
+      },
+      "functions": {
+        "chatbot": {
+          "handler": "wsgi_handler.handler",
+          "events": [
+            {
+              "http": {
+                "path": "/",
+                "method": "ANY"
+              }
+            },
+            {
+              "http": {
+                "path": "/{proxy+}",
+                "method": "ANY"
+              }
+            }
+          ]
+        }
+      },
+      "package": {
+        "exclude": [
+          "venv/**",
+          ".serverless/**",
+          "node_modules/**"
+        ]
+      },
+      "plugins": [
+        "serverless-python-requirements",
+        "serverless-wsgi",
+        "serverless-dotenv-plugin"
+      ],
+      "custom": {
+        "wsgi": {
+          "app": "chatbot_project.wsgi.application"
+        },
+        "pythonRequirements": {
+          "dockerizePip": false
+        },
+        "serverless-offline": {
+          "httpPort": 5000
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "stage": "dev",
+      "runtime": "python3.9",
+      "region": "us-east-1",
+      "memorySize": 512,
+      "timeout": 30,
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "secretsmanager:GetSecretValue"
+          ],
+          "Resource": "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+        }
+      ],
+      "environment": {
+        "SECRETS_MANAGER_ARN": "<REDACTED>",
+        "CHAT_DJANGO_SETTINGS_MODULE": "${env:CHAT_DJANGO_SETTINGS_MODULE}",
+        "CHAT_ACCESS_KEY": "<REDACTED>",
+        "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
+        "CHAT_DATABASE_URL": "postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}"
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: chatbot-django\r\n\r\nprovider:\r\n  name: aws\r\n  stage: dev\r\n  runtime: python3.9  # Use the Python version matching your project\r\n  region: us-east-1  # Change based on your AWS region\r\n  memorySize: 512  # Memory for Lambda function\r\n  timeout: 30  # Lambda timeout in seconds\r\n  iamRoleStatements:\r\n    - Effect: \"Allow\"\r\n      Action:\r\n        - \"secretsmanager:GetSecretValue\"\r\n      Resource: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n  environment:\r\n    SECRETS_MANAGER_ARN: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}\r\n    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}\r\n    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}\r\n    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}\r\n\r\nfunctions:\r\n  chatbot:\r\n    handler: wsgi_handler.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: ANY\r\n      - http: \r\n          path: /{proxy+}\r\n          method: ANY\r\n  \r\npackage:\r\n  exclude:\r\n    - venv/**\r\n    - .serverless/**\r\n    - node_modules/**\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-dotenv-plugin\r\n\r\n\r\ncustom:\r\n  wsgi:\r\n    app: chatbot_project.wsgi.application\r\n  pythonRequirements:\r\n    dockerizePip: false\r\n  serverless-offline:\r\n    httpPort: 5000",
+    "command": [
+      "login"
+    ],
+    "options": {},
+    "orgId": "12e89127-01d5-459b-8711-66f43dcbc71c",
+    "orgName": "universityofnorthtexas1147",
+    "userId": "CjHclCvyRNmy01q5DB",
+    "userName": "universityofnorthtexas1147",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
