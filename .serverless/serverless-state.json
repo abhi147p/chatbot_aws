@@ -137,7 +137,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "chatbot-const-files",
-                "S3Key": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z/chatbot-django.zip"
+                "S3Key": "serverless/chatbot-django/dev/1741810094220-2025-03-12T20:08:14.220Z/chatbot-django.zip"
               },
               "Handler": "wsgi_handler.handler",
               "Runtime": "python3.10.11",
@@ -305,7 +305,7 @@
               "ChatbotLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1741808453819": {
+          "ApiGatewayDeployment1741810060733": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -471,7 +471,7 @@
           ".serverless-wsgi"
         ],
         "artifact": "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\.serverless\\chatbot-django.zip",
-        "artifactDirectoryName": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z"
+        "artifactDirectoryName": "serverless/chatbot-django/dev/1741810094220-2025-03-12T20:08:14.220Z"
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
@@ -486,7 +486,7 @@
     "artifact": "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\.serverless\\chatbot-django.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z",
+    "artifactDirectoryName": "serverless/chatbot-django/dev/1741810094220-2025-03-12T20:08:14.220Z",
     "artifact": "chatbot-django.zip"
   }
 }
