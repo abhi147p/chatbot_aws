@@ -3,14 +3,16 @@ service: chatbot-django
 provider:
   name: aws
   stage: dev
-  runtime: python3.9  # Use the Python version matching your project
+  runtime: python3.10.11  # Use the Python version matching your project
+  deploymentBucket:
+    name: ${env:CHAT_S3_BUCKET}
   region: us-east-1  # Change based on your AWS region
   memorySize: 512  # Memory for Lambda function
   timeout: 30  # Lambda timeout in seconds
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "secretsmanager:GetSecretValue"
+        - "secretsmanager:GetSecretValue" # chatbot secret manager arn value 
       Resource: "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
   environment:
     SECRETS_MANAGER_ARN: "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"

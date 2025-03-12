@@ -8,7 +8,8 @@
       "provider": {
         "name": "aws",
         "stage": "dev",
-        "runtime": "python3.9",
+        "runtime": "python3.10.11",
+        "deploymentBucket": "chatbot-const-files",
         "region": "us-east-1",
         "memorySize": 512,
         "timeout": 30,
@@ -23,11 +24,388 @@
         ],
         "environment": {
           "SECRETS_MANAGER_ARN": "<REDACTED>",
-          "CHAT_DJANGO_SETTINGS_MODULE": "${env:CHAT_DJANGO_SETTINGS_MODULE}",
+          "CHAT_DJANGO_SETTINGS_MODULE": "chatbot_project.settings",
           "CHAT_ACCESS_KEY": "<REDACTED>",
           "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
-          "CHAT_DATABASE_URL": "postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}"
-        }
+          "CHAT_DATABASE_URL": "postgres://chatbot_admin:SridharPuppala147P@chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com:5432/chatbot_db",
+          "CHAT_ACCESS_KEY_ID": "<REDACTED>",
+          "DB_NAME": "chatbot_db",
+          "DB_SERVER": "chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com",
+          "DB_USER": "chatbot_admin",
+          "DB_PASSWORD": "<REDACTED>",
+          "DB_PORT": "5432",
+          "CHAT_S3_BUCKET": "chatbot-const-files",
+          "CHAT_region": "us-east-1",
+          "CHAT_STAGE": "dev"
+        },
+        "versionFunctions": true,
+        "deploymentBucketObject": {
+          "name": "chatbot-const-files"
+        },
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "ChatbotLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/chatbot-django-dev-chatbot"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "chatbot-django",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatbot-django-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatbot-django-dev*:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "secretsmanager:GetSecretValue"
+                          ],
+                          "Resource": "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "chatbot-django",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "ChatbotLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "chatbot-const-files",
+                  "S3Key": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z/chatbot-django.zip"
+                },
+                "Handler": "wsgi_handler.handler",
+                "Runtime": "python3.10.11",
+                "FunctionName": "chatbot-django-dev-chatbot",
+                "MemorySize": 512,
+                "Timeout": 30,
+                "Environment": {
+                  "Variables": {
+                    "SECRETS_MANAGER_ARN": "<REDACTED>",
+                    "CHAT_DJANGO_SETTINGS_MODULE": "chatbot_project.settings",
+                    "CHAT_ACCESS_KEY": "<REDACTED>",
+                    "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
+                    "CHAT_DATABASE_URL": "postgres://chatbot_admin:SridharPuppala147P@chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com:5432/chatbot_db",
+                    "CHAT_ACCESS_KEY_ID": "<REDACTED>",
+                    "DB_NAME": "chatbot_db",
+                    "DB_SERVER": "chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "chatbot_admin",
+                    "DB_PASSWORD": "<REDACTED>",
+                    "DB_PORT": "5432",
+                    "CHAT_S3_BUCKET": "chatbot-const-files",
+                    "CHAT_region": "us-east-1",
+                    "CHAT_STAGE": "dev"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "ChatbotLogGroup"
+              ]
+            },
+            "ChatbotLambdaVersionE7IaQHlGIN3TIB6YBaSByc97KCJM8ihP9OKOiUPIv2c": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ChatbotLambdaFunction"
+                },
+                "CodeSha256": "ae/PH4EbEFtUU2Fbx/BBZf6N0t8Ney9MPynk96YSuJ0="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-chatbot-django",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceProxyVar": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "{proxy+}",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodAny": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "ANY",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "ChatbotLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "ChatbotLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodProxyVarAny": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "ANY",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceProxyVar"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "ChatbotLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "ChatbotLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1741808453819": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodAny",
+                "ApiGatewayMethodProxyVarAny"
+              ]
+            },
+            "ChatbotLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ChatbotLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "chatbot-const-files",
+              "Export": {
+                "Name": "sls-chatbot-django-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "ChatbotLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ChatbotLambdaVersionE7IaQHlGIN3TIB6YBaSByc97KCJM8ihP9OKOiUPIv2c"
+              },
+              "Export": {
+                "Name": "sls-chatbot-django-dev-ChatbotLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-chatbot-django-dev-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
       },
       "functions": {
         "chatbot": {
@@ -35,17 +413,26 @@
           "events": [
             {
               "http": {
-                "path": "/",
-                "method": "ANY"
+                "path": "",
+                "method": "any",
+                "integration": "AWS_PROXY"
               }
             },
             {
               "http": {
-                "path": "/{proxy+}",
-                "method": "ANY"
+                "path": "{proxy+}",
+                "method": "any",
+                "integration": "AWS_PROXY"
               }
             }
-          ]
+          ],
+          "name": "chatbot-django-dev-chatbot",
+          "package": {},
+          "memory": 512,
+          "timeout": 30,
+          "runtime": "python3.10.11",
+          "vpc": {},
+          "versionLogicalId": "ChatbotLambdaVersionE7IaQHlGIN3TIB6YBaSByc97KCJM8ihP9OKOiUPIv2c"
         }
       },
       "package": {
@@ -53,7 +440,16 @@
           "venv/**",
           ".serverless/**",
           "node_modules/**"
-        ]
+        ],
+        "artifactsS3KeyDirname": "serverless/chatbot-django/dev/code-artifacts",
+        "deploymentBucket": "chatbot-const-files",
+        "patterns": [
+          "wsgi_handler.py",
+          "serverless_wsgi.py",
+          ".serverless-wsgi"
+        ],
+        "artifact": "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\.serverless\\chatbot-django.zip",
+        "artifactDirectoryName": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z"
       },
       "plugins": [
         "serverless-python-requirements",
@@ -75,7 +471,8 @@
     "provider": {
       "name": "aws",
       "stage": "dev",
-      "runtime": "python3.9",
+      "runtime": "python3.10.11",
+      "deploymentBucket": "chatbot-const-files",
       "region": "us-east-1",
       "memorySize": 512,
       "timeout": 30,
@@ -90,11 +487,388 @@
       ],
       "environment": {
         "SECRETS_MANAGER_ARN": "<REDACTED>",
-        "CHAT_DJANGO_SETTINGS_MODULE": "${env:CHAT_DJANGO_SETTINGS_MODULE}",
+        "CHAT_DJANGO_SETTINGS_MODULE": "chatbot_project.settings",
         "CHAT_ACCESS_KEY": "<REDACTED>",
         "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
-        "CHAT_DATABASE_URL": "postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}"
-      }
+        "CHAT_DATABASE_URL": "postgres://chatbot_admin:SridharPuppala147P@chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com:5432/chatbot_db",
+        "CHAT_ACCESS_KEY_ID": "<REDACTED>",
+        "DB_NAME": "chatbot_db",
+        "DB_SERVER": "chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com",
+        "DB_USER": "chatbot_admin",
+        "DB_PASSWORD": "<REDACTED>",
+        "DB_PORT": "5432",
+        "CHAT_S3_BUCKET": "chatbot-const-files",
+        "CHAT_region": "us-east-1",
+        "CHAT_STAGE": "dev"
+      },
+      "versionFunctions": true,
+      "deploymentBucketObject": {
+        "name": "chatbot-const-files"
+      },
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ChatbotLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/chatbot-django-dev-chatbot"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "chatbot-django",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:TagResource"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatbot-django-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/chatbot-django-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "secretsmanager:GetSecretValue"
+                        ],
+                        "Resource": "arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "chatbot-django",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "ChatbotLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "chatbot-const-files",
+                "S3Key": "serverless/chatbot-django/dev/1741808482883-2025-03-12T19:41:22.883Z/chatbot-django.zip"
+              },
+              "Handler": "wsgi_handler.handler",
+              "Runtime": "python3.10.11",
+              "FunctionName": "chatbot-django-dev-chatbot",
+              "MemorySize": 512,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "SECRETS_MANAGER_ARN": "<REDACTED>",
+                  "CHAT_DJANGO_SETTINGS_MODULE": "chatbot_project.settings",
+                  "CHAT_ACCESS_KEY": "<REDACTED>",
+                  "CHAT_SECRET_ACCESS_KEY": "<REDACTED>",
+                  "CHAT_DATABASE_URL": "postgres://chatbot_admin:SridharPuppala147P@chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com:5432/chatbot_db",
+                  "CHAT_ACCESS_KEY_ID": "<REDACTED>",
+                  "DB_NAME": "chatbot_db",
+                  "DB_SERVER": "chatbot-db-cluster.cluster-cb4koygccrv8.us-east-1.rds.amazonaws.com",
+                  "DB_USER": "chatbot_admin",
+                  "DB_PASSWORD": "<REDACTED>",
+                  "DB_PORT": "5432",
+                  "CHAT_S3_BUCKET": "chatbot-const-files",
+                  "CHAT_region": "us-east-1",
+                  "CHAT_STAGE": "dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "ChatbotLogGroup"
+            ]
+          },
+          "ChatbotLambdaVersionE7IaQHlGIN3TIB6YBaSByc97KCJM8ihP9OKOiUPIv2c": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ChatbotLambdaFunction"
+              },
+              "CodeSha256": "ae/PH4EbEFtUU2Fbx/BBZf6N0t8Ney9MPynk96YSuJ0="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-chatbot-django",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceProxyVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "{proxy+}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAny": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "ANY",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ChatbotLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "ChatbotLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodProxyVarAny": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "ANY",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProxyVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ChatbotLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "ChatbotLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1741808453819": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodAny",
+              "ApiGatewayMethodProxyVarAny"
+            ]
+          },
+          "ChatbotLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ChatbotLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "chatbot-const-files",
+            "Export": {
+              "Name": "sls-chatbot-django-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "ChatbotLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ChatbotLambdaVersionE7IaQHlGIN3TIB6YBaSByc97KCJM8ihP9OKOiUPIv2c"
+            },
+            "Export": {
+              "Name": "sls-chatbot-django-dev-ChatbotLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-chatbot-django-dev-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "vpc": {}
     },
     "dashboard": {
       "isEnabledForService": false,
@@ -105,19 +879,46 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: chatbot-django\r\n\r\nprovider:\r\n  name: aws\r\n  stage: dev\r\n  runtime: python3.9  # Use the Python version matching your project\r\n  region: us-east-1  # Change based on your AWS region\r\n  memorySize: 512  # Memory for Lambda function\r\n  timeout: 30  # Lambda timeout in seconds\r\n  iamRoleStatements:\r\n    - Effect: \"Allow\"\r\n      Action:\r\n        - \"secretsmanager:GetSecretValue\"\r\n      Resource: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n  environment:\r\n    SECRETS_MANAGER_ARN: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}\r\n    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}\r\n    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}\r\n    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}\r\n\r\nfunctions:\r\n  chatbot:\r\n    handler: wsgi_handler.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: ANY\r\n      - http: \r\n          path: /{proxy+}\r\n          method: ANY\r\n  \r\npackage:\r\n  exclude:\r\n    - venv/**\r\n    - .serverless/**\r\n    - node_modules/**\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-dotenv-plugin\r\n\r\n\r\ncustom:\r\n  wsgi:\r\n    app: chatbot_project.wsgi.application\r\n  pythonRequirements:\r\n    dockerizePip: false\r\n  serverless-offline:\r\n    httpPort: 5000",
+    "error": {
+      "message": "User: arn:aws:iam::686255947123:user/chatbot-user is not authorized to perform: s3:ListBucket on resource: \"arn:aws:s3:::chatbot-const-files\" with an explicit deny in an identity-based policy",
+      "stack": "ServerlessError3: User: arn:aws:iam::686255947123:user/chatbot-user is not authorized to perform: s3:ListBucket on resource: \"arn:aws:s3:::chatbot-const-files\" with an explicit deny in an identity-based policy\n    at file:///C:/Users/puppa/.serverless/releases/4.8.0/package/dist/sf-core.js:1211:36\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async persistentRequest (file:///C:/Users/puppa/.serverless/releases/4.8.0/package/dist/sf-core.js:1210:1961)",
+      "code": "AWS_S3_LIST_OBJECTS_V2_ACCESS_DENIED"
+    },
+    "serviceRawFile": "service: chatbot-django\r\n\r\nprovider:\r\n  name: aws\r\n  stage: dev\r\n  runtime: python3.10.11  # Use the Python version matching your project\r\n  deploymentBucket:\r\n    name: ${env:CHAT_S3_BUCKET}\r\n  region: us-east-1  # Change based on your AWS region\r\n  memorySize: 512  # Memory for Lambda function\r\n  timeout: 30  # Lambda timeout in seconds\r\n  iamRoleStatements:\r\n    - Effect: \"Allow\"\r\n      Action:\r\n        - \"secretsmanager:GetSecretValue\" # chatbot secret manager arn value \r\n      Resource: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n  environment:\r\n    SECRETS_MANAGER_ARN: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}\r\n    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}\r\n    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}\r\n    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}\r\n\r\nfunctions:\r\n  chatbot:\r\n    handler: wsgi_handler.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: ANY\r\n      - http: \r\n          path: /{proxy+}\r\n          method: ANY\r\n  \r\npackage:\r\n  exclude:\r\n    - venv/**\r\n    - .serverless/**\r\n    - node_modules/**\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-dotenv-plugin\r\n\r\n\r\ncustom:\r\n  wsgi:\r\n    app: chatbot_project.wsgi.application\r\n  pythonRequirements:\r\n    dockerizePip: false\r\n  serverless-offline:\r\n    httpPort: 5000",
     "command": [
-      "login"
+      "deploy"
     ],
-    "options": {},
+    "options": {
+      "stage": "dev"
+    },
     "orgId": "12e89127-01d5-459b-8711-66f43dcbc71c",
     "orgName": "universityofnorthtexas1147",
     "userId": "CjHclCvyRNmy01q5DB",
     "userName": "universityofnorthtexas1147",
-    "serviceProviderAwsCfStackId": null,
-    "serviceProviderAwsCfStackCreated": null,
-    "serviceProviderAwsCfStackUpdated": null,
-    "serviceProviderAwsCfStackStatus": null,
-    "serviceProviderAwsCfStackOutputs": null
+    "serviceProviderAwsAccountId": "686255947123",
+    "serviceProviderAwsCfStackName": "chatbot-django-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:686255947123:stack/chatbot-django-dev/fe0da3b0-ff09-11ef-a4ff-0affe25c9dd5",
+    "serviceProviderAwsCfStackCreated": "2025-03-12T06:19:45.496Z",
+    "serviceProviderAwsCfStackUpdated": "2025-03-12T06:55:08.044Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_ROLLBACK_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ChatbotLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:686255947123:function:chatbot-django-dev-chatbot:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-chatbot-django-dev-ChatbotLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://yni3hkag2a.execute-api.us-east-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-chatbot-django-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-4b695180-4303",
+        "ExportName": "sls-chatbot-django-dev-ServerlessDeploymentBucketName"
+      }
+    ]
   }
 }
