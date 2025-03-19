@@ -53,3 +53,5 @@ custom:
     dockerizePip: false
   serverless-offline:
     httpPort: 5000
+  dotenv:
+    path: ./dev.env

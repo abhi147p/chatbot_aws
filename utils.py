@@ -2,7 +2,7 @@
 from csvhandler import S3CSVHandler
 
 # Initialize the handler for a specific S3 bucket and file
-s3_handler = S3CSVHandler(bucket_name="chatbot-const-files", file_key="awsspreadsheet.csv")
+s3_handler = S3CSVHandler(bucket_name="chatbot-const-files", file_key="awsNspreadsheet.csv")
 
 # Define the fieldnames for the CSV structure
 csv_columns = ["ID", "Name", "Education", "Experience"]

@@ -1,10 +1,12 @@
 {
   "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\serverless.yml": {
-    "versionFramework": "4.8.0",
+    "versionFramework": "4.9.0",
     "servicePath": "C:\\Users\\puppa\\All_Git_Files\\chatbot_aws\\serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
       "service": "chatbot-django",
+      "org": "universityofnorthtexas1147",
+      "app": "chatbot",
       "provider": {
         "name": "aws",
         "stage": "dev",
@@ -72,6 +74,9 @@
         },
         "serverless-offline": {
           "httpPort": 5000
+        },
+        "dotenv": {
+          "path": "./dev.env"
         }
       }
     },
@@ -103,19 +108,29 @@
       }
     },
     "dashboard": {
-      "isEnabledForService": false,
+      "isEnabledForService": true,
       "requiredAuthentication": false,
-      "orgFeaturesInUse": null,
+      "orgFeaturesInUse": {
+        "providers": false,
+        "monitoring": false
+      },
       "orgObservabilityIntegrations": null,
-      "serviceAppId": null,
+      "serviceAppId": "7QLyhc6Wrt7N3SZvqZ",
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: chatbot-django\r\n\r\nprovider:\r\n  name: aws\r\n  stage: dev\r\n  runtime: python3.10.11  # Use the Python version matching your project\r\n  deploymentBucket:\r\n    name: ${env:CHAT_S3_BUCKET}\r\n  region: us-east-1  # Change based on your AWS region\r\n  memorySize: 512  # Memory for Lambda function\r\n  timeout: 30  # Lambda timeout in seconds\r\n  iamRoleStatements:\r\n    - Effect: \"Allow\"\r\n      Action:\r\n        - \"secretsmanager:GetSecretValue\" # chatbot secret manager arn value \r\n      Resource: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n  environment:\r\n    SECRETS_MANAGER_ARN: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}\r\n    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}\r\n    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}\r\n    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}\r\n\r\nfunctions:\r\n  chatbot:\r\n    handler: wsgi_handler.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: ANY\r\n      - http: \r\n          path: /{proxy+}\r\n          method: ANY\r\n  \r\npackage:\r\n  exclude:\r\n    - venv/**\r\n    - .serverless/**\r\n    - node_modules/**\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-dotenv-plugin\r\n\r\n\r\ncustom:\r\n  wsgi:\r\n    app: chatbot_project.wsgi.application\r\n  pythonRequirements:\r\n    dockerizePip: false\r\n  serverless-offline:\r\n    httpPort: 5000",
+    "error": {
+      "message": "Cannot resolve '${env:CHAT_S3_BUCKET}' variable at 'provider.deploymentBucket.name'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.",
+      "stack": "Error: Cannot resolve '${env:CHAT_S3_BUCKET}' variable at 'provider.deploymentBucket.name'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.\n    at _ResolverManager.resolve (file:///C:/Users/puppa/.serverless/releases/4.9.0/package/dist/sf-core.js:550:31867)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async #handlePlaceholderNode (file:///C:/Users/puppa/.serverless/releases/4.9.0/package/dist/sf-core.js:550:30074)\n    at async file:///C:/Users/puppa/.serverless/releases/4.9.0/package/dist/sf-core.js:550:27946\n    at async processNodeAndHandleCompletion (file:///C:/Users/puppa/.serverless/releases/4.9.0/package/dist/sf-core.js:550:16727)",
+      "code": "MISSING_VARIABLE_RESULT"
+    },
+    "serviceRawFile": "service: chatbot-django\r\norg: universityofnorthtexas1147\r\napp: chatbot\r\n\r\nprovider:\r\n  name: aws\r\n  stage: dev\r\n  runtime: python3.10.11  # Use the Python version matching your project\r\n  deploymentBucket:\r\n    name: ${env:CHAT_S3_BUCKET}\r\n  region: us-east-1  # Change based on your AWS region\r\n  memorySize: 512  # Memory for Lambda function\r\n  timeout: 30  # Lambda timeout in seconds\r\n  iamRoleStatements:\r\n    - Effect: \"Allow\"\r\n      Action:\r\n        - \"secretsmanager:GetSecretValue\" # chatbot secret manager arn value \r\n      Resource: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n  environment:\r\n    SECRETS_MANAGER_ARN: \"arn:aws:secretsmanager:us-east-1:686255947123:secret:chatbot-secrets-rtdK4R\"\r\n    CHAT_DJANGO_SETTINGS_MODULE: ${env:CHAT_DJANGO_SETTINGS_MODULE}\r\n    CHAT_ACCESS_KEY: ${env:CHAT_ACCESS_KEY_ID}\r\n    CHAT_SECRET_ACCESS_KEY: ${env:CHAT_SECRET_ACCESS_KEY}\r\n    CHAT_DATABASE_URL: postgresql://${env:DB_USER}:${env:DB_PASSWORD}@${env:DB_SERVER}:${env:DB_PORT}/${env:DB_NAME}\r\n\r\nfunctions:\r\n  chatbot:\r\n    handler: wsgi_handler.handler\r\n    events:\r\n      - http:\r\n          path: /\r\n          method: ANY\r\n      - http: \r\n          path: /{proxy+}\r\n          method: ANY\r\n  \r\npackage:\r\n  exclude:\r\n    - venv/**\r\n    - .serverless/**\r\n    - node_modules/**\r\n\r\nplugins:\r\n  - serverless-python-requirements\r\n  - serverless-wsgi\r\n  - serverless-dotenv-plugin\r\n\r\n\r\ncustom:\r\n  wsgi:\r\n    app: chatbot_project.wsgi.application\r\n  pythonRequirements:\r\n    dockerizePip: false\r\n  serverless-offline:\r\n    httpPort: 5000\r\n  dotenv:\r\n    path: ./dev.env",
     "command": [
-      "login"
+      "print"
     ],
-    "options": {},
+    "options": {
+      "stage": "dev"
+    },
     "orgId": "12e89127-01d5-459b-8711-66f43dcbc71c",
     "orgName": "universityofnorthtexas1147",
     "userId": "CjHclCvyRNmy01q5DB",

@@ -19,3 +19,5 @@ def load_env():
 
     # print(f"Loaded environment file: {env_file}")
     # print(f"AWS Region: {os.getenv('AWS_REGION')}")
+
+load_env()
